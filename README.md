@@ -1,4 +1,6 @@
-# Timed Choice plugin for Ren'Py
+# Timed Choices plugin for Ren'Py
+
+This plugin allows you to offer timed choices in a Ren'Py project, where something happens if the player takes too long to select an option. It introduces a new command that integrates seamlessly in the Ren'Py scripting language.
 
 ## How to install
 
