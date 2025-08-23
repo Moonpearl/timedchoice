@@ -41,7 +41,8 @@ label plugin_timedchoice_demo:
     "Next…"
     "This is an example of a timed choice with a timer set."
 
-    timedchoice 10:
+    timedchoice:
+        timer 10
         "Ponder about the absurdity of life":
             "You now feel empty inside."
         "Reflect on your past choices":

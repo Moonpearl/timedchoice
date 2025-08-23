@@ -1,7 +1,7 @@
 python early:
     class TimedChoice:
-        def __init__(self, time=None):
-            self.time = time
+        def __init__(self):
+            self.time = None
             self.default_option = None
             self.options = []
 
@@ -27,27 +27,37 @@ python early:
         name = 'timedchoice'
 
         def parse(self, lexer):
-            time = lexer.float()
             lexer.require(':')
             lexer.expect_eol()
             lexer.expect_block(self.name)
 
-            if (time != None):
-                time = float(time)
-            choice = TimedChoice(time=time)
+            choice = TimedChoice()
 
-            choiceblock_lexer = lexer.subblock_lexer()
+            sub_lexer = lexer.subblock_lexer()
 
-            while choiceblock_lexer.advance():
-                with choiceblock_lexer.catch_error():
-                    default = choiceblock_lexer.keyword('default') != ''
-                    hidden = choiceblock_lexer.keyword('hidden') != ''
-                    text = choiceblock_lexer.string()
-                    choiceblock_lexer.require(':')
-                    choiceblock_lexer.expect_eol()
-                    choiceblock_lexer.expect_block(text)
+            while sub_lexer.advance():
+                with sub_lexer.catch_error():
+                    sub_lexer.skip_whitespace()
 
-                    contentblock_lexer = choiceblock_lexer.subblock_lexer()
+                    if sub_lexer.eol():
+                        continue
+
+                    if sub_lexer.keyword('timer') != '':
+                        time = sub_lexer.float()
+                        if (time == None):
+                            sub_lexer.error('No value provided for "timer" property.')
+                        choice.time = time
+                        sub_lexer.expect_eol()
+                        continue
+
+                    default = sub_lexer.keyword('default') != ''
+                    hidden = sub_lexer.keyword('hidden') != ''
+                    text = sub_lexer.string()
+                    sub_lexer.require(':')
+                    sub_lexer.expect_eol()
+                    sub_lexer.expect_block(text)
+
+                    contentblock_lexer = sub_lexer.subblock_lexer()
                     contentblock = contentblock_lexer.renpy_block(empty=True)
                     
                     choice.add_option(text=text, block=contentblock, default=default, hidden=hidden)
