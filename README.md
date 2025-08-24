@@ -52,7 +52,7 @@ You can allow the user to adjust the speed of timed choices by adding the follow
 
 ```rpy
 screen preferences():
-    # Add the follwing after the "Text Speed" slider
+    # Add the following after the "Text Speed" slider
 
     label _("Timed Choice Speed")
 
@@ -81,11 +81,13 @@ The following examples are meant for technical reference. Please refer to the de
 
 The syntax of the new `timedchoice` command mimicks that of the built-in `menu` command.
 
+**Rules:**
+
 - The `timedchoice` command **must** be followed by `:` and a new block.
 - Each option **must** be a `string` (arbitrary text marked by double quotes `"`), **must** be followed by `:` and a new block.
 - The block of commands for each option can be any valid block in the Ren'Py syntax.
 
-Example:
+**Example:**
 
 ```rpy
 timedchoice:
@@ -99,14 +101,16 @@ timedchoice:
 
 This will prompt the user to take a pick between all 3 options and execute only the block of commands associated with that option. If the choice times out (the user hasn't selected any options before the timer runs out), then nothing happens.
 
-### Define a default option
+### Define a time-out option
 
-It is possible to force an option to be picked when the choice times out. To do this, add a `default` keyword before the option's name.
+It is possible to force an option to be picked when the choice times out. To do this, add a `timeout` keyword before the option's name.
 
-- The `default` keyword **may** be included, and **must** be written before the option's name.
-- A single choice **must not** have more than 1 default option.
+**Rules:**
 
-Example:
+- The `timeout` keyword **may** be included, and **must** be written before the option's name.
+- A single choice **must not** have more than 1 `timeout` option.
+
+**Example:**
 
 ```rpy
 timedchoice:
@@ -114,7 +118,7 @@ timedchoice:
         # What to do when option 1 is selected
     "Option 2":
         # What to do when option 2 is selected
-    default "Option 3":
+    timeout "Option 3":
         # What to do when option 3 is selected
 ```
 
@@ -122,7 +126,7 @@ This will behave like the previous example, except that if the choice times out 
 
 *NOTE: a transform will be applied to the default option that allows to visually identify it. This transform is labeled as `timedchoice_default_option` and can be overriden to suit your needs.*
 
-*Example:*
+***Example:***
 
 ```rpy
 transform timedchoice_default_option:
@@ -132,39 +136,88 @@ transform timedchoice_default_option:
     matrixcolor IdentityMatrix()
 ```
 
-## Hide the default option
+## Hide the time-out option
 
-It is possible to define a default option that cannot be picked manually, and thus is triggered only on time out.
+It is possible to define a time-out option that cannot be picked manually, and thus is triggered only on time-out.
 
-Example:
+**Rules:**
+
+- The `hidetimeout` parameter **may** be included in the `timedchoice` command block.
+- If it is present, the `hidetimeout` paramter **must** be followed by an expression.
+- The expression following the `hidetimeout` parameter **must** resolve to a **bool** (`True` or `False`).
+
+**Example:**
 
 ```rpy
 timedchoice:
+    hidetimeout True
     "Option 1":
         # What to do when option 1 is selected
     "Option 2":
         # What to do when option 2 is selected
-    default hidden:
+    timeout:
         # What to do when option 3 is selected
 ```
 
 This will behave like the previous example, except that the third option will not be listed in the options that the user can pick.
 
-## Adjust the timer
+*NOTE: though it is technically possible to give a caption to the hidden option, like for any other options, it doesn't really make any sense since the option will not be displayed anyway. However, you may want to give it a caption anyway, in the case the `hidetimeout` option is variable.*
 
-It is possible to modify the time allocated to the user to make his decision.
-
-- The time in seconds **may** be included, and it **must** be right after the `timedchoice` command.
-- If not time is specified, then the default time will be used.
+**Example:**
 
 ```rpy
-timedchoice 10:
+init python:
+    def somelogic():
+        # Write some logic that returns True or False
+
+timedchoice:
+    # Whether the time-out option is hidden will be decided according to the result of the somelogic() function
+    hidetimeout somelogic()
     "Option 1":
         # What to do when option 1 is selected
     "Option 2":
         # What to do when option 2 is selected
-    default "Option 3":
+    timeout "Option 3":
         # What to do when option 3 is selected
 ```
 
-This will behave like the previous example, except that the user will have 10 seconds instead of the default 5 to think and make a choice.
+## Adjust the timer
+
+It is possible to modify the time allocated to the user to make his decision.
+
+**Rules:**
+
+- The `timer` parameter **may** be included in the `timedchoice` command block.
+- If it is present, the `timer` paramter **must** be followed by an expression.
+- The expression following the `timer` parameter **must** resolve to a number.
+
+**Example:**
+
+```rpy
+timedchoice:
+    timer 10
+    "Option 1":
+        # What to do when option 1 is selected
+    "Option 2":
+        # What to do when option 2 is selected
+    timeout "Option 3":
+        # What to do when option 3 is selected
+```
+
+This will behave like the previous example, except that the user will have 10 seconds instead of the default 3 to think and make a choice.
+
+*NOTE: just like the `hidetimeout` paramter, the `timer` parameter can be set using a variable or a function.*
+
+**Example:**
+
+```rpy
+timedchoice:
+    # This will cause the timer to be set to a random number between 2 and 5
+    timer renpy.random.randint(2, 5)
+    "Option 1":
+        # What to do when option 1 is selected
+    "Option 2":
+        # What to do when option 2 is selected
+    timeout "Option 3":
+        # What to do when option 3 is selected
+```

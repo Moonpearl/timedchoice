@@ -31,10 +31,9 @@ screen timedchoice(choice):
     style_prefix "choice"
 
     # Adjust the total time by the speed setting.
-    if (choice.time == None):
-        default time = float(default_timer) / persistent.timedchoice_speed
-    else:
-        default time = float(choice.time) / persistent.timedchoice_speed
+    default unscaled_time = default_timer if choice.time == None else eval(choice.time)
+    default speed = persistent.timedchoice_speed if persistent.timedchoice_speed != None and persistent.timedchoice_speed != 0 else 1
+    default time = float(unscaled_time) / speed
 
     # Manage timer.
     default timer_finished = False
@@ -49,10 +48,14 @@ screen timedchoice(choice):
         else:
             timer 0.01 action Jump(choice.default_option.block)
 
+    default hide_timeout = eval(choice.hide_timeout) if choice.hide_timeout != None else False
+
     # Show the list of choices.
     vbox:
         # The choices.
         for option in choice.options:
+            if option.is_default() and hide_timeout:
+                continue
             textbutton option.text:
                 action Jump(option.block)
                 if option.is_default():
