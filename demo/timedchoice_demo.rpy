@@ -18,7 +18,7 @@ label plugin_timedchoice_demo:
     timedchoice:
         "Shout":
             "You decided to shout."
-        default "Stay silent":
+        timeout "Stay silent":
             "You decided to stay silent."
 
     "This allows you to enforce a choice if the player can't make up their mind."
@@ -33,7 +33,7 @@ label plugin_timedchoice_demo:
             "You decided to run away."
         "Hide":
             "You decided to hide."
-        default:
+        timeout:
             "You just stand there and get crushed by a meteor."
     
     "This allows you to enforce consequences if the player can't make up their mind, without them knowing what's going to happen."
@@ -48,7 +48,7 @@ label plugin_timedchoice_demo:
             "You now feel empty inside."
         "Reflect on your past choices":
             "You think that many things could have gone differently."
-        default "Wait for something interesting to happen":
+        timeout "Wait for something interesting to happen":
             "You wait for some time, but nothing happens."
     
     "This is useful when you want to allow the player more time to think, if there's a lot of text to read, or if the choice is especially difficult."
@@ -92,7 +92,7 @@ label plugin_timedchoice_demo_variables:
             "You get back to your sleep."
         "Pick the red pill":
             "You suddenly awaken."
-        default "Don't pick anything":
+        timeout "Don't pick anything":
             "You tremble as you hesitate."
             call plugin_timedchoice_demo_variables
 

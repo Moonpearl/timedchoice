@@ -58,7 +58,7 @@ python early:
                         sub_lexer.expect_eol()
                         continue
 
-                    default = sub_lexer.keyword('default') != ''
+                    default = sub_lexer.keyword('timeout') != ''
                     text = sub_lexer.string()
                     sub_lexer.require(':')
                     sub_lexer.expect_eol()
